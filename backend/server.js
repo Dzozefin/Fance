@@ -39,6 +39,16 @@ const apiLimiter = rateLimit({
 });
 app.use('/api/', apiLimiter);
 
+// General rate limiter for all other routes (300 req / 15 min per IP)
+const generalLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 300,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' },
+});
+app.use(generalLimiter);
+
 // Serve frontend build (production)
 const frontendBuild = path.join(__dirname, '..', 'frontend', 'build');
 app.use(express.static(frontendBuild));
